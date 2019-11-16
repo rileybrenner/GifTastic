@@ -1,146 +1,115 @@
+$(document).ready(function() {
+    // Declaring Initial Array of Topics which is a list of Hobbies
+    var topics = ["surfing", "spearfishing", "hiking", "skateboarding", "painting"];
 
-//             <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-//             <script type="text/javascript">
+    /// List of all functions below
 
-//             // Array of strings of topics of interest to me
+    //Function to display info on the topics by calling an API and retrieving the info 
+    function displayInfo(){
+      $('#hobby-view').empty();
+      var topic = $(this).attr('data-name');
+      var queryURL = 'https://api.giphy.com/v1/gifs/search?q=' + topic + '&api_key=dAWaCGFhHvD0hnLC2oufRkeZIm533tVv&limit=10';
 
-//             var topics = ["surfing", "spearfishing", "hiking", "skateboarding", "painting"];
+      // AJAX call to GET information 
+      $.ajax({
+        url: queryURL,
+        method: "GET"
+      })
+      .then(function(response) {
+        
+        // Record the JSON response from API callto a variable called results
+        var results = response.data;
 
-//             // displayTopicInfo function re-renders the HTML to display the appropriate content
-//             function displayTopicInfo(){
+        // for loop created to go through each item in the object 
+        for (var i = 0; i < results.length; i++){
+          // Create new Topic Div
+          var newHobbyDiv = $("<div class='hobby-name'>");
 
-//                 console.log(this);
+          // Gif Rating
+          var rating = results[i].rating;
 
-//                 var topic = $(this).attr("data-name");
-//                 console.log(topic);
-//                 var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + topic + "&api_key=dAWaCGFhHvD0hnLC2oufRkeZIm533tVv";
-//                 console.log(queryURL);
-//                 $.ajax({
-//                 url: queryURL,
-//                 method: "GET"
-//               }).then(function(response) {
+          var p = $("<p>").text("Rating: " + rating); 
 
-//             // Creating a div to hold the topic
-//                 var topicDiv = $("<div class = 'topic'>");
-            
-//           // Storing an array of results in the results variable
-//           var results = response.data;
+          // Gif IMAGE functionality
+          var gifURL = results[i].images.fixed_height_still.url;         
+          var gif = $('<img>');
+          gif.attr('src', gifURL);
+          gif.attr('data-still', results[i].images.fixed_height_still.url);
+          gif.attr('data-animate', results[i].images.fixed_height.url);
+          gif.attr('data-state', 'still');
+          // adding a class for each result for styling purposes
+          gif.addClass ('animate-gif');
+          // Appending rating 
+          newHobbyDiv.append(p);
+          // Appending Gif Image;
+          newHobbyDiv.append(gif);
+           // Appending New Hobby Div to my ID in HTML of Hobby-View
+          $('#hobby-view').append(newHobbyDiv);
+        } 
+      });
+    };
+    
+    // Function for displaying buttons called render buttons
+    function renderButtons() {
+      // Remove hobbies before adding more hobbies
+      $('.buttons-view').empty();
+      // Loops through the array of topics to create buttons for all topics
+      for (var i = 0; i < topics.length; i++) {
+        var createButtons = $('<button>');
+        createButtons.addClass('topic btn btn-info');
+        createButtons.attr('data-name', topics[i]);
+        createButtons.text(topics[i]);
+        $('.buttons-view').append(createButtons);
+      }
+    }
 
-//           // Looping over every result item
-//           for (var i = 0; i < results.length; i++) {
+    // Function to remove buttons
+    function removeButton(){
+      $("#hobby-view").empty();
+      var topic = $(this).attr('data-name');
+      var itemindex = topics.indexOf(topic);
+      if (itemindex > -1) {
+        topics.splice(itemindex, 1);
+        renderButtons();
+      }
+    }
 
-//               // Creating a div for the gif
-//               var gifDiv = $("<div>");
+    // Function to play or still Gif images
+    function playGif () {
+      var state = $(this).attr('data-state');
+      if (state === 'still') {
+        $(this).attr('src', $(this).attr('data-animate'));
+        $(this).attr('data-state', 'animate');
+      }
+      else {
+        $(this).attr('src' , $(this).attr('data-still'));
+        $(this).attr('data-state', 'still');
+      }
+    }
 
-//               // Storing the result item's rating
-//               var rating = results[i].rating;
+    // Upon clicking the submit button we will add a new hobby button
+    $("#add-hobby").on("click", function(event) {
+      event.preventDefault();
+      // user input captured from the form
+      var hobby = $("#hobby-search").val().trim();
 
-//               console.log(results,'results');
+      // push hobby into array
 
-//               // Creating a paragraph tag with the result item's rating
-//               var p = $("<p>").text("Rating: " + rating);
-
-//               // Creating an image tag
-//               var personImage = $("<img>");
-
-//               // Giving the image tag an src attribute of a proprty pulled off the
-//               // result item
-
-//               var image = results[i].images.fixed_height.url; 
-//               personImage.attr("src", image);
-
-//               console.log(image, 'image');
-
-
-//               // Appending the paragraph and personImage we created to the "gifDiv" div we created
-//               gifDiv.append(p);
-//               gifDiv.append(personImage);
-
-//               // Prepending the gifDiv to the "#gifs-appear-here" div in the HTML
-//               $("#topics-view").prepend(gifDiv);
-            
-//           }
-//         })
-//     //         // storing the rating data
-//     //         var rating = response.rating;
-
-//     //         // creating an element to have the ratin displayed
-//     //         var p0ne = $("<p>").text("Rating: " + rating);
-            
-//     //         // Displaying the rating
-//     //         topicDiv.append(p0ne);
-            
-//     //         // retrieving url for the image
-//     //         var imgURL = response.data[0].images.fixed_height.url;
-
-//     //         // creating element to hold the image
-//     //         var image = $("<img>").attr("src", imgURL);
-
-//     //         // append the image
-//     //         topicDiv.append(image);
-
-//     //         // put the entire topic above previous movies
-//     //         $("topics-view").prepend(topicDiv);
-//             //   
-
-//     //         // function for displaying topic data
-//     //         function renderButtons(){
-            
-//     //             // deleting the topics prior to adding the new topics. necessary so to avoid repeat buttons
-            
-//     //         $("#buttons-view").empty();
-
-//     //         // looping through array of topics
-//     //         for (var i = 0; i < topics.length; i++) {
-
-//     //             // dynamically generate buttons for each topic in array
-
-//     //         var a = $("<button>");
-
-//     //         // adding a class for topic-btn to our button
-//     //         a.addClass("topic-btn")
-
-//     //         // adding data attribute
-//     //         a.attr("data-name", topics[i]);
-
-//     //     // providing an initial text button
-//     //     a.text(topics[i]);
-
-//     //     // adding the button to the button-view div
-//     //     $("#buttons-view").append(a);       
-//     //     }
-//     // }
-
-//     // function handles events where a topic button is clicked
-//     $("#add-topic").on("click", function(event){
-//         event.preventDefault();
-
-//         // this line grabs the input from the textbox
-
-//         var topic = $("#topic-input").val().trim;
-
-//         // Adding topic from the textbox to our array
-
-//         topics.push(topic);
-
-//         // Calling renderButtons which handles the processing our topic array
-
-//         renderButtons();
-
-//     });
-            
-//     // adding a click event listener to all elements with a class of "topic-btn"
-
-//     $(document).on("click",".topic-btn",displayTopicInfo);
-
-//     // calling the renderButtons function to display the initial buttons
-
-//     renderButtons();
+      topics.push(hobby);
+      renderButtons();
 
 
+    });
+
+    // Click on hobby button to display Gifs and other info from API
+    $(document).on("click", ".topic", displayInfo);
+    // User can click on the Gif image to animate or click again to make it still
+    $(document).on("click", ".animate-gif", playGif);
+    // Double-click on any hobby button to remove it from the UI List/array
+    $(document).on("dblclick", ".topic", removeButton);
+
+    // This calls the renderButtons function to display the intial buttons from original array
+    renderButtons();
 
 
-          
-// </script>
-
-alert{"Hello world"};
+});
