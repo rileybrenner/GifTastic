@@ -1,173 +1,42 @@
+  
+<!--GIFTASTIC Homework! -->
 <!DOCTYPE html>
-    <head>
-        <meta charset="utf-8">
-        <title>Giftastic</title>
-    </head>
-    <body>
-        <div class="container">
-            <h1>Hobby Search</h1>
-                                
-        <!-- Render buttons to be added here-->
-        <div id="buttons-view"></div>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>GIFtastic</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- BootStrap Link -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+        
+    <div class="container">
+        <h2>Hobby Search!</h2>
+           
+        <!-- Div for Buttons  -->
+        <div class = "row">
+            <div class="buttons-view"></div>
+        </div>
+        
+        <div class = "row">
+            <div class="3col-lg-9 container-fluid">
+                <!-- Details from API call and JSON response will be added here -->
+                <div id="hobby-view"></div>
+            </div>
+            <!-- Div for the submit button and form-->
+            <div class="col-lg-3">
+                <form id="hero-form">
+                <label for="hobby-search">Add Your Favorite Hobby!</label>
+                <input type="text" class="form-control col-12" id="hobby-search"><br>
+                <input class="btn btn-primary" id="add-hobby" type="submit" value="Submit">
+                </form>
+            </div>
+        </div>
+    </div>
 
-        <form id="topic-form">
-            <label for="topic-input">Add a hobby!</label>
-            <input type = "text" id="topic-input">
-            <br>
-
-        <!-- Button trigers new topic to be added -->
-            <input id="add-topic" type="submit" value="Submit">
-
-        </form>
-
-        <!-- Topics will be added here -->
-        <div id = "topics-view"></div>
-
-
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-            <script type="text/javascript">
-
-            // Array of strings of topics of interest to me
-
-            var topics = ["surfing", "spearfishing", "hiking", "skateboarding", "painting"];
-
-            // displayTopicInfo function re-renders the HTML to display the appropriate content
-            function displayTopicInfo(){
-
-                console.log(this);
-
-                var topic = $(this).attr("data-name");
-                console.log(topic);
-                var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + topic + "&api_key=dAWaCGFhHvD0hnLC2oufRkeZIm533tVv";
-                console.log(queryURL);
-                $.ajax({
-                url: queryURL,
-                method: "GET"
-              }).then(function(response) {
-
-            // Creating a div to hold the topic
-                var topicDiv = $("<div class = 'topic'>");
-            
-          // Storing an array of results in the results variable
-          var results = response.data;
-
-          // Looping over every result item
-          for (var i = 0; i < results.length; i++) {
-
-              // Creating a div for the gif
-              var gifDiv = $("<div>");
-
-              // Storing the result item's rating
-              var rating = results[i].rating;
-
-              console.log(results,'results');
-
-              // Creating a paragraph tag with the result item's rating
-              var p = $("<p>").text("Rating: " + rating);
-
-              // Creating an image tag
-              var personImage = $("<img>");
-
-              // Giving the image tag an src attribute of a proprty pulled off the
-              // result item
-
-              var image = results[i].images.fixed_height.url; 
-              personImage.attr("src", image);
-
-              console.log(image, 'image');
-
-
-              // Appending the paragraph and personImage we created to the "gifDiv" div we created
-              gifDiv.append(p);
-              gifDiv.append(personImage);
-
-              // Prepending the gifDiv to the "#gifs-appear-here" div in the HTML
-              $("#topics-view").prepend(gifDiv);
-            
-          }
-        })
-    //         // storing the rating data
-    //         var rating = response.rating;
-
-    //         // creating an element to have the ratin displayed
-    //         var p0ne = $("<p>").text("Rating: " + rating);
-            
-    //         // Displaying the rating
-    //         topicDiv.append(p0ne);
-            
-    //         // retrieving url for the image
-    //         var imgURL = response.data[0].images.fixed_height.url;
-
-    //         // creating element to hold the image
-    //         var image = $("<img>").attr("src", imgURL);
-
-    //         // append the image
-    //         topicDiv.append(image);
-
-    //         // put the entire topic above previous movies
-    //         $("topics-view").prepend(topicDiv);
-            //   
-
-    //         // function for displaying topic data
-    //         function renderButtons(){
-            
-    //             // deleting the topics prior to adding the new topics. necessary so to avoid repeat buttons
-            
-    //         $("#buttons-view").empty();
-
-    //         // looping through array of topics
-    //         for (var i = 0; i < topics.length; i++) {
-
-    //             // dynamically generate buttons for each topic in array
-
-    //         var a = $("<button>");
-
-    //         // adding a class for topic-btn to our button
-    //         a.addClass("topic-btn")
-
-    //         // adding data attribute
-    //         a.attr("data-name", topics[i]);
-
-    //     // providing an initial text button
-    //     a.text(topics[i]);
-
-    //     // adding the button to the button-view div
-    //     $("#buttons-view").append(a);       
-    //     }
-    // }
-
-    // function handles events where a topic button is clicked
-    $("#add-topic").on("click", function(event){
-        event.preventDefault();
-
-        // this line grabs the input from the textbox
-
-        var topic = $("#topic-input").val().trim;
-
-        // Adding topic from the textbox to our array
-
-        topics.push(topic);
-
-        // Calling renderButtons which handles the processing our topic array
-
-        renderButtons();
-
-    });
-            
-    // adding a click event listener to all elements with a class of "topic-btn"
-
-    $(document).on("click",".topic-btn",displayTopicInfo);
-
-    // calling the renderButtons function to display the initial buttons
-
-    renderButtons();
-
-
-
-
-          
-</script>
-  </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="assets/giphy.js"></script>
 </body>
-
 </html>
